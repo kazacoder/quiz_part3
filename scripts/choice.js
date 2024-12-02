@@ -1,8 +1,9 @@
 (function () {
     const Choice = {
         quizzes: [],
+        storedUser: {},
         init () {
-            checkUserData();
+            this.storedUser = checkUserData();
 
             const xhr = new XMLHttpRequest();
             xhr.open("GET", "https://testologia.ru/get-quizzes", false);
@@ -51,9 +52,13 @@
             }
         },
         chooseQuiz (element) {
-            const dataId =element.getAttribute('data-id');
+
+            const dataId = element.getAttribute('data-id');
             if (dataId) {
-                location.href = 'test.html' + location.search + '&id=' + dataId;
+                this.storedUser.testId = dataId;
+                sessionStorage.setItem('storedResult', JSON.stringify(this.storedUser));
+
+                location.href = 'test.html';
             }
 
         }

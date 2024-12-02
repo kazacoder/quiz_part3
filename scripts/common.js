@@ -1,10 +1,14 @@
 function checkUserData() {
-    const url = new URL(location.href);
-    const name = url.searchParams.get("name");
-    const lastName = url.searchParams.get("lastName");
-    const email = url.searchParams.get("email");
-
-    if (!name || !lastName || !email ) {
+    let storedResult = {}
+    const storedResultRaw = sessionStorage.getItem('storedResult');
+    if (storedResultRaw) {
+        storedResult = JSON.parse(storedResultRaw);
+    } else {
         location.href = 'index.html';
     }
+
+    if (!storedResult.name || !storedResult.lastName || !storedResult.email ) {
+        location.href = 'index.html';
+    }
+    return storedResult;
 }

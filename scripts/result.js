@@ -23,6 +23,7 @@
         showAnswers () {
             let rightAnswers = []
 
+            // getting right answers
             const xhr = new XMLHttpRequest();
             xhr.open('GET', 'https://testologia.ru/get-quiz-right?id='  + this.storedResult.testId, false);
             xhr.send();
@@ -38,19 +39,21 @@
             }
 
             const that = this
+            // add attribute to chosen answer in question: 'success' if answer right, else 'wrong'
             if (rightAnswers.length > 0) {
                 this.storedResult.results.forEach(function (answer, index) {
                     if (answer.chosenAnswerId && rightAnswers[index] === answer.chosenAnswerId) {
-                        that.storedResult.quiz.questions[index].result = 'success'
-                        console.log(answer, 'success');
+                        that.storedResult.quiz.questions[index].answers.find(item => item.id === answer.chosenAnswerId)
+                            .result = 'success'
                     } else if (answer.chosenAnswerId && rightAnswers[index] !== answer.chosenAnswerId) {
-                        that.storedResult.quiz.questions[index].result = 'wrong'
-                        console.log(answer, 'wrong');
+                        that.storedResult.quiz.questions[index].answers.find(item => item.id === answer.chosenAnswerId)
+                            .result = 'wrong'
                     }
                 })
                 console.log(rightAnswers);
             }
 
+            // save data to session storage
             sessionStorage.setItem('storedResult', JSON.stringify(this.storedResult));
 
             location.href = 'answers.html';

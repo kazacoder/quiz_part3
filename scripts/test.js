@@ -10,16 +10,15 @@
         passButtonElement: null,
         passAction: null,
         userResult: [],
-        rightAnswers: [],
+        storedResult: {},
+        testId: null,
         init () {
-            checkUserData();
+            this.storedResult = checkUserData();
+            this.testId = this.storedResult.testId;
 
-            const url = new URL(location.href);
-            const testId = url.searchParams.get('id');
-
-            if (testId) {
+            if (this.testId) {
                 const xhr = new XMLHttpRequest();
-                xhr.open("GET", "https://testologia.ru/get-quiz?id=" + testId, false);
+                xhr.open("GET", "https://testologia.ru/get-quiz?id=" + this.testId, false);
                 xhr.send();
 
                 if (xhr.status === 200 && xhr.responseText) {
@@ -190,25 +189,15 @@
 
         },
         complete () {
-            const url = new URL(location.href)
-            const id = url.searchParams.get('id');
-            const name = url.searchParams.get('name');
-            const lastName = url.searchParams.get('lastName');
-            const email = url.searchParams.get('email');
-            const storedResult = {
-                name: name,
-                lastName: lastName,
-                email: email,
-                testId: id,
-                results: this.userResult,
-                quiz: this.quiz
-            }
+            this.storedResult.results = this.userResult;
+            this.storedResult.quiz = this.quiz
+
 
             //getting results
             const xhr = new XMLHttpRequest();
-            xhr.open('POST', 'https://testologia.ru/pass-quiz?id=' + id, false);
+            xhr.open('POST', 'https://testologia.ru/pass-quiz?id=' + this.testId, false);
             xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
-            xhr.send(JSON.stringify(storedResult))
+            xhr.send(JSON.stringify(this.storedResult))
             sessionStorage.removeItem('storedResult')
 
             if (xhr.status === 200 && xhr.responseText) {
@@ -219,17 +208,14 @@
                     location.href = 'index.html';
                 }
                 if (result) {
-                    storedResult.score = result.score;
-                    storedResult.total = result.total;
+                    this.storedResult.score = result.score;
+                    this.storedResult.total = result.total;
                     location.href = 'result.html';
-                    sessionStorage.setItem('storedResult', JSON.stringify(storedResult))
+                    sessionStorage.setItem('storedResult', JSON.stringify(this.storedResult))
                 }
             } else {
                 location.href = 'index.html';
             }
-
-
-
 
         },
     };
